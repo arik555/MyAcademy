@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    {% include 'cdn.html' %}
+    <title>
+        {% block title %}
+            MyAcademy |
+        {% endblock %}
+    </title>
+    <style>
+    nav {
+        box-shadow: 0px 1px 20px 0px black !important;
+    }
+    .nav-link {
+        font-size: 1.1rem;
+    }
+    html {
+      scroll-behavior: smooth;
+    }
+    .shadow_power {
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    }
+    </style>
+
+    {% block style %}
+
+    {% endblock %}
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light justify-content-between">
+  <a class="navbar-brand" href="{% url 'home' %}">
+      <img src="http://i68.tinypic.com/ykk0j.jpg" alt="" class="img-fluid">
+  </a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNavDropdown">
+    <ul class="navbar-nav ml-auto">
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'home' %}"><span class="fa fa-home"></span> Home</a>
+      </li>
+      <li class="nav-item">
+          <a class="nav-link" href="{% url 'browse' %}"><span class="fa fa-tasks"></span> Browse Courses</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#"><span class="fa fa-tty"></span> Support</a>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <span class="fa fa-user-o"></span> {% if request.user.is_authenticated %}
+            {{ request.user }}
+            {% else %}
+            Auth
+          {% endif %}
+        </a>
+        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+        {% if request.user.is_authenticated is False %}
+          <a class="dropdown-item" href="{% url 'login' %}"><span class="fa fa-sign-in"></span> Login</a>
+          <a class="dropdown-item" href="#myModal" data-toggle="modal"><span class="fa fa-id-badge"></span> Register</a>
+        {% endif %}
+          <a class="dropdown-item" href="{% url 'my_profile' %}"><span class="fa fa-user-circle-o"></span> Profile</a>
+          {% if request.user.is_authenticated %}
+            <a class="dropdown-item" href="{% url 'logout' %}"><span class="fa fa-sign-out"></span> Logout</a>
+          {% endif %}
+        {% if author %}
+            <a class="dropdown-item" href="{% url 'add_course' %}"><span class="fa fa-upload"></span> Upload Course</a>
+          {% endif %}
+        </div>
+      </li>
+    </ul>
+  </div>
+</nav>
+{% block carousel %}
+
+{% endblock %}
+{% block plain %}
+
+{% endblock %}
+<div class="container-fluid">
+    {% block content_fluid %}
+
+    {% endblock %}
+    {% block content %}
+
+    {% endblock %}
+</div>
+<!-- The Modal -->
+<div class="modal fade" id="myModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Registration</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+          <button class="btn btn-outline-primary" onclick="window.location.assign('{% url 'register_author' %}');"
+                  >Author</button>
+          <button class="btn btn-outline-info" onclick="window.location.assign('{% url 'register_customer' %}');">Customer</button>
+      </div>
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+<!-- The Modal -->
+<div class="modal fade" id="myreadModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Registration</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+          <button type="button" onclick="window.location.assign('{% url 'register_author' %}');">Author</button>
+          <button type="button" onclick="window.location.assign('{% url 'register_customer' %}');">Customer</button>
+      </div>
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% block footer %}
+<footer class="bd-footer text-muted bg-dark w-100">
+  <div class="container-fluid p-3">
+    <p class="lead" style="color: white;">Made with <span class="fa fa-heart" style="color: red;"></span></p>
+    <p class="lead" style="color: white;">Developed by arikSarkar. &copy; MyAcademy. {% now "Y" %}.</p>
+  </div>
+</footer>
+{% endblock %}
+{% block add_scripts %}
+
+{% endblock %}
+</body>
+</html>

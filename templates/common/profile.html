@@ -1,0 +1,380 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{{ block.super }} {{ title }}
+{% endblock %}
+
+{% block plain %}
+    {% if auth is False %}
+        <style>
+            @media only screen and (max-width: 600px) {
+              .txt1 {
+                display: none;
+              }
+            }
+        </style>
+    <div class="card" style="width: 100%; height: auto;">
+      <img class="card-img-top" src="http://i64.tinypic.com/sv2rg6.jpg" alt="Card image">
+      <div class="card-img-overlay">
+        <h1 class="card-title txt1">Make a global impact</h1>
+        <p class="card-text txt1">Create an online video course and earn money by teaching<br>
+            people around the
+            world.</p>
+        <a href="{% url 'upgrade_account' %}" class="btn btn-warning btn-md">Become an instructor</a>
+      </div>
+    </div>
+    <div class="jumbotron jumbotron-fluid" style="margin-bottom: 0px">
+      <div class="container">
+        <h1 class="display-4" align="center">Discover your potential</h1>
+          <div class="row text-center mt-5">
+              <div class="col-sm-4">
+                  <h1><span class="fa fa-bank"></span></h1>
+                  <p class="lead">
+                  Earn money every time a student purchases your course. Get paid monthly through PayPal or Payoneer, it’s your choice.
+                  </p>
+              </div>
+              <div class="col-sm-4">
+                  <h1><span class="fa fa-camera-retro"></span></h1>
+                  <p class="lead">
+                  Help people learn new skills, advance their careers, and explore their hobbies by sharing your knowledge.
+                  </p>
+              </div>
+              <div class="col-sm-4">
+                  <h1><span class="fa fa-handshake-o"></span></h1>
+                  <p class="lead">
+                  Take advantage of our active community of instructors to help you through your course creation process.
+                  </p>
+              </div>
+          </div>
+      </div>
+    </div>
+    {% endif %}
+{% endblock %}
+
+{% block content_fluid %}
+    <style>
+        .nav-tabs .nav-link {
+            text-decoration: none;
+            color: white;
+        }
+    </style>
+    <div class="row">
+        <div class="col-sm-12 bg-secondary pt-5" style="color: white;">
+            <h1>DashBoard <span class="text-muted">You are recognized as a genuine author.</span></h1>
+{#            <button onclick="make_author('{{ request.user.pk }}');"></button>#}
+
+            <ul class="nav nav-tabs">
+              {% if auth %}
+              <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#home">MyUploads</a>
+              </li>
+              {% endif %}
+              <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#menu1">Enrolled Courses</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#menu2">Edit Profile</a>
+              </li>
+            </ul>
+<style>
+.accordion {
+  background-color: #eee;
+  color: #444;
+  cursor: pointer;
+  padding: 18px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-size: 15px;
+  transition: 0.4s;
+}
+
+.tab-pane .active, .accordion:hover {
+  background-color: #ccc;
+}
+
+.panel {
+  padding: 0 18px;
+  display: none;
+  background-color: white;
+  overflow: hidden;
+}
+    .accordion {
+        font-size: 1.1rem;
+        font-family: 'Ubuntu', 'Lucida Grande', 'Lucida Sans Unicode', 'Geneva', 'Verdana', sans-serif;
+        font-weight: bolder;
+        margin-bottom: 5px;
+    }
+    .heavy {
+        display: none;
+    }
+    #home .card-header:hover {
+        cursor: pointer;
+        background-color: #cccccc;
+        color: #eeeeee;
+        transition: background-color 1s;
+    }
+
+</style>
+            <!-- Tab panes -->
+            <div class="tab-content" style="background-color: white; color: dimgrey;">
+              <div class="tab-pane container fade" id="home">
+<button onclick="window.location.assign('{% url 'add_course' %}');" class="btn btn-outline-dark mt-3 mb-1"><span
+        class="fa fa-plus"></span> Course</button>
+              {% if query|length < 1 %}
+                <p class="lead pt-3">No records found.</p>
+              {% endif %}
+                  {% for each in query %}
+                  <div class="card mb-3" onclick="spl(this)">
+                      <div class="card-header"><b>{{ each.name|upper }}</b>
+          <button class="btn btn-outline-dark config"
+                  onclick="window.location.assign('{% url 'add_chapter' course=each.id %}');"><span class="fa fa-plus"></span>
+              Chapter</button>
+          <button class="btn btn-outline-dark config" onclick="window.location.assign('{% url 'edit_course' id=each.id %}');"><span class="fa fa-pencil"></span> Course</button>
+          <button class="btn btn-outline-dark config" onclick="window.location.assign('{% url 'delete_course' id=each.id %}');"><span class="fa fa-trash"></span> Course</button>
+                      </div>
+                  <section class="heavy">
+                      {% for every in each.my_chapter.all %}
+                          {% if forloop.counter|divisibleby:2 %}
+                          <div class="card-footer">
+                            {% with chap=forloop %}
+                                <p style="font-weight: bold;">{{ forloop.counter }}. {{ every.name|capfirst }}
+                                  <button class="btn btn-outline-dark btn-sm config" onclick="window.location.assign('{% url 'add_section' course=each.id chapter=every.id %}');"><span class="fa fa-plus"></span>
+                                    Section</button>
+                                  <button class="btn btn-outline-dark btn-sm config" onclick="window.location.assign('{% url 'edit_chapter' id=every.id %}');"><span class="fa fa-pencil"></span>
+                                    Chapter</button>
+                                  <button class="btn btn-outline-dark btn-sm config" onclick="window.location.assign('{% url 'delete_chapter' id=every.id %}');"><span class="fa fa-trash"></span>
+                                    Chapter</button>
+                                </p>
+                              {% for item in every.my_section.all %}
+                                  <p style="font-style: italic;">{{ chap.counter }}.{{ forloop.counter }} {{ item.name }}
+                                      | <span class="text-muted">{{ item.beautify|safe }} </span> <a
+                                              href="#myreadModal" data-toggle="modal" onclick="gothere('{{ every.name }}', '{{ item.id }}');
+                                              ">Read More</a> ~ {{ item.content }}
+                                  <button class="btn btn-outline-dark btn-sm config" onclick="on(
+                                          '{{ item.content.url }}');"><span class="fa fa-eye"></span>
+                                    Content</button>
+                                  <button class="btn btn-outline-dark btn-sm config" onclick="window.location.assign('{% url 'edit_section' id=item.id %}');"><span class="fa fa-pencil"></span>
+                                        Section</button>
+                                  <button class="btn btn-outline-dark btn-sm config" onclick="window.location.assign('{% url 'delete_section' id=item.id %}');"><span class="fa fa-trash"></span>
+                                        Section</button>
+                                  </p>
+                                  <p class="full-text" style="display: none;">{{ item.beautify|safe }}</p>
+                              {% endfor %}
+                            {% endwith %}
+                          </div>
+                          {% else %}
+                            <div class="card-body">
+                              {% with chap=forloop %}
+                                <p style="font-weight: bold;">{{ forloop.counter }}. {{ every.name|capfirst }}
+                                  <button class="btn btn-outline-dark btn-sm config" onclick="window.location.assign('{% url 'add_section' course=each.id chapter=every.id %}');"><span class="fa fa-plus"></span>
+                                    Section</button>
+                                  <button class="btn btn-outline-dark btn-sm config" onclick="window.location.assign('{% url 'edit_chapter' id=every.id %}');"><span class="fa fa-pencil"></span>
+                                    Chapter</button>
+                                  <button class="btn btn-outline-dark btn-sm config" onclick="window.location.assign('{% url 'delete_chapter' id=every.id %}');"><span class="fa fa-trash"></span>
+                                    Chapter</button>
+                                </p>
+                          {% for item in every.my_section.all %}
+                              <p style="font-style: italic;">{{ chap.counter }}.{{ forloop.counter }} {{ item.name }}
+                                  | <span class="text-muted">{{ item.beautify|safe }} </span> ~ {{ item.content }}
+                              <button class="btn btn-outline-dark btn-sm config" onclick="on(
+                                          '{{ item.content.url }}');"><span class="fa fa-eye"></span>
+                                    Content</button>
+                              <button class="btn btn-outline-dark btn-sm config" onclick="window.location.assign('{% url 'edit_section' id=item.id %}');"><span class="fa fa-pencil"></span>
+                                    Section</button>
+                              <button class="btn btn-outline-dark btn-sm config" onclick="window.location.assign('{% url 'delete_section' id=item.id %}');"><span class="fa fa-trash"></span>
+                                    Section</button>
+                              </p>
+                          {% endfor %}
+                            {% endwith %}
+                      </div>
+                          {% endif %}
+                      {% endfor %}
+                  </section>
+                    </div>
+                  {% endfor %}
+              </div>
+            {% if auth is False %}
+            <div class="tab-pane container fade" id="menu1">
+              {% if query|length < 1 %}
+                <p class="lead pt-3">No records found.</p>
+              {% endif %}
+              <p style="visibility: hidden;">This will contain the data table.</p>
+                  {% for each in query %}
+                      {% for course in each.course.all %}
+                        <button class="accordion" style="border: 1px solid black;">{{ course.name }}</button>
+                        <div class="panel">
+                            {% for chapter in course.my_chapter.all %}
+                                <button class="accordion">{{ chapter.name }}</button>
+                                <div class="panel">
+                                    {% for item in chapter.my_section.all %}
+                                        <div class="card">
+                                          <div class="card-header">
+                                              <p class="lead">{{ item.name }}</p>
+                                              <p class="text-muted">{{ item.beautify|safe }}</p>
+                                          </div>
+                                          <div class="card-body">
+                                              <span class="fa fa-video-camera"></span> <a href="javascript:void(0)" onclick="on(
+                                                  '{{ item.content.url }}');"
+                                          >{{ item.name }}</a>
+                                          </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                      {% endfor %}
+                  {% endfor %}
+                    <script>
+                    var acc = document.getElementsByClassName("accordion");
+                    var i;
+
+                    for (i = 0; i < acc.length; i++) {
+                      acc[i].addEventListener("click", function() {
+                        this.classList.toggle("active");
+                        var panel = this.nextElementSibling;
+                        if (panel.style.display === "block") {
+                          panel.style.display = "none";
+                        } else {
+                          panel.style.display = "block";
+                        }
+                      });
+                    }
+                    </script>
+              </div>
+            <div class="tab-pane container fade" id="menu2"></div>
+            {% else %}
+              <div class="tab-pane container fade" id="menu1">
+              {% if enroll_query|length < 1 %}
+                <p class="lead pt-3">No records found.</p>
+              {% endif %}
+              <p style="visibility: hidden;">This will contain the data table.</p>
+                  {% for each in enroll_query %}
+                      {% for course in each.course.all %}
+                        <button class="accordion" style="border: 1px solid black;">{{ course.name }}</button>
+                        <div class="panel">
+                            {% for chapter in course.my_chapter.all %}
+                                <button class="accordion">{{ chapter.name }}</button>
+                                <div class="panel">
+                                    {% for item in chapter.my_section.all %}
+                                        <div class="card">
+                                          <div class="card-header">
+                                              <p class="lead">{{ item.name }}</p>
+                                              <p class="text-muted">{{ item.beautify|safe }}</p>
+                                          </div>
+                                          <div class="card-body">
+                                              <span class="fa fa-video-camera"></span> <a href="javascript:void(0)" onclick="on(
+                                                  '{{ item.content.url }}');"
+                                          >{{ item.name }}</a>
+                                          </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                      {% endfor %}
+                  {% endfor %}
+                    <script>
+                    var acc = document.getElementsByClassName("accordion");
+                    var i;
+
+                    for (i = 0; i < acc.length; i++) {
+                      acc[i].addEventListener("click", function() {
+                        this.classList.toggle("active");
+                        var panel = this.nextElementSibling;
+                        if (panel.style.display === "block") {
+                          panel.style.display = "none";
+                        } else {
+                          panel.style.display = "block";
+                        }
+                      });
+                    }
+                    </script>
+              </div>
+              <div class="tab-pane container fade" id="menu2"></div>
+            {% endif %}
+
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block footer %}
+<style>
+.overlay {
+  height: 100%;
+  width: 0;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: rgb(0,0,0);
+  background-color: rgba(0,0,0, 0.9);
+  overflow-x: hidden;
+  transition: 0.5s;
+}
+
+.overlay-content {
+  position: relative;
+  top: 10%;
+  width: 100%;
+  text-align: center;
+  margin-top: 10px;
+}
+
+.overlay .closebtn {
+  position: absolute;
+  top: 20px;
+  right: 45px;
+  font-size: 60px;
+}
+</style>
+<div id="myNav" class="overlay">
+  <a href="javascript:void(0)" class="closebtn" onclick="closeNav()" style="text-decoration: none; color: white;
+">&times;</a>
+  <div class="overlay-content">
+      <video id="video-frame" autoplay controls="controls">
+
+      </video>
+  </div>
+</div>
+{{ block.super }}
+{% endblock %}
+
+{% block add_scripts %}
+<script>
+function on(arik) {
+    document.getElementById("myNav").style.width = "100%";
+    //alert(arik);
+    $('.overlay-content').html('<video id="video-frame" autoplay controls controlsList="nodownload" width="854" ' +
+        'height="478">\n' +
+        '<source src="'+arik+'" type="video/mp4"></source></video>' );
+    //alert(playerElement.src);
+
+}
+
+function closeNav() {
+  document.getElementById("myNav").style.width = "0%";
+  pausevideo();
+}
+
+function pausevideo() {
+    var vid = document.getElementById("video-frame");
+    vid.pause();
+    $('.overlay-content').html('');
+    //alert('Paused!');
+}
+function gothere(arik, sarkar) {
+  var x = $('full-text').text;
+  alert(x);
+  $('#myreadModal h4').html = 'Chapter: '+arik;
+  $('#myreadModal .modal-body').html = x;
+
+  // window.location.assign(x);
+}
+function spl(arik) {
+    $(arik).children('section').toggleClass("heavy");
+}
+</script>
+{% endblock %}

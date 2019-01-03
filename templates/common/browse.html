@@ -1,0 +1,198 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{{ block.super }} {{ title }}
+{% endblock %}
+
+{% block content_fluid %}
+    <style>
+        section {
+            border: 1px solid mediumslateblue;
+            border-radius: 0px 0px 10px 10px;
+            padding: 30px 0px 30px 20px;
+        }
+        header {
+            border: 1px solid mediumslateblue;
+            border-radius: 10px 10px 0px 0px;
+            border-bottom: none;
+            padding: 15px;
+            font-family: 'Ubuntu', 'Lucida Grande', 'Lucida Sans Unicode', 'Geneva', 'Verdana', sans-serif;
+            background-color: #f8f8ff;
+        }
+        .name {
+            font-size: 2.2rem;
+        }
+        .rate, .price {
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+        .desc {
+            font-size: 1.25rem;
+            font-weight: 300;
+        }
+    </style>
+        {% if invoke %} <!-- Showing a course information...  -->
+<div class="row">
+    <div class="col-sm-12">
+            <header class="mt-4">
+            <span class="name">{{ query.name }}</span><br>
+            <span class="rate">{% for rate in 'xxxxx' %}
+                {% if forloop.counter <= query.rating  %}
+                    <span class="fa fa-star checked" style="color: orange;"></span>
+                {% else %}
+                    <span class="fa fa-star"></span>
+                {% endif %}
+            {% endfor %}({{ query.rating }})</span><br>
+            <span class="price">&#8377;{{ query.price }}</span>
+            </header>
+            <section>
+            <div class="row">
+                <div class="col-sm-8">
+                    <p class="desc">{{ query.beautify|safe }}</p>
+                </div>
+                <div class="col-sm-4">
+                    <img src="{{ query.avatar }}" class="img-fluid">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-8">
+                    <h3>Brief Overview:</h3>
+                    {% for every in query.my_chapter.all %}
+                        <h5>{{ every.name }}</h5>
+                        <ul>
+                        {% for item in every.my_section.all %}
+                            {% if forloop.first %}
+                                <li><a href="javascript:void(0)" onclick="on('{{ item.content.url }}');">
+                                    {{ item.name }}</a> [<span class="fa fa-eye"></span>]</li>
+                            {% else %}
+                                <li><a href="#">{{ item.name }}</a></li>
+                            {% endif %}
+                        {% endfor %}
+                        </ul>
+                    {% endfor %}
+                </div>
+            </div>
+            {% if enroll %}
+                {% if request.user.is_authenticated %}
+                    <p>
+                    Hooray! You've already enrolled.
+                    On: {% for i in enroll %}
+                        {{ i }}
+                    {% endfor %}
+                    </p>
+                {% else %}
+                    <button class="btn btn-outline-primary" onclick="window.location.assign('{% url 'enroll_course' course=query.id %}');">Enroll the
+                        course
+                        .</button>
+                {% endif %}
+            {% else %}
+                <button class="btn btn-outline-primary" onclick="window.location.assign('{% url 'enroll_course' course=query.id %}');">Enroll the course.</button>
+            {% endif %}
+            </section>
+        </div>
+    </div>
+{% else %} <!-- Showing all available courses... -->
+        <div class="row">
+            <div class="col-sm-5 mx-auto">
+                <form class="form-inline my-4" method="get" action="{% url 'browse' %}">
+                    <input class="form-control mr-sm-2" type="search" placeholder="Browse" aria-label="Search"
+                           name="qs">
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                </form>
+            </div>
+        </div>
+        <div class="row">
+        {% for each in query %}
+              <div class="col-sm-6 col-md-5 col-lg-3">
+                  <div class="card" style="margin: 5px; padding: 3px;">
+                      <img src="{{ each.avatar|safe }}" alt="Profile Pic 1" class="img-thumbnail"/>
+                      <h5 class="card-title text-center">{{ each.name }}</h5>
+                      <p class="card-text">{{ each.desc|truncatewords:15 }}</p>
+                      <h6>&#8377;{{ each.price }}</h6>
+                  <p style="float: left;">
+                    {% for rate in 'xxxxx' %}
+                        {% if forloop.counter <= each.rating  %}
+                            <span class="fa fa-star checked" style="color: orange;"></span>
+                        {% else %}
+                            <span class="fa fa-star"></span>
+                        {% endif %}
+                    {% endfor %}
+                    <span id="stars">{{ each.rating }}</span>
+                  </p>
+                      <div align="center" style="margin-bottom: 5px;">
+                        <a href="{% url 'browse' course=each.id %}" class="btn btn-primary"
+                        style="text-decoration: none;">View Course</a>
+                      </div>
+                  </div>
+              </div>
+        {% endfor %}
+        </div>
+{% endif %}
+{% endblock %}
+
+{% block footer %}
+<style>
+.overlay {
+  height: 100%;
+  width: 0;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: rgb(0,0,0);
+  background-color: rgba(0,0,0, 0.9);
+  overflow-x: hidden;
+  transition: 0.5s;
+}
+
+.overlay-content {
+  position: relative;
+  top: 10%;
+  width: 100%;
+  text-align: center;
+  margin-top: 10px;
+}
+
+.overlay .closebtn {
+  position: absolute;
+  top: 20px;
+  right: 45px;
+  font-size: 60px;
+}
+</style>
+<div id="myNav" class="overlay">
+  <a href="javascript:void(0)" class="closebtn" onclick="closeNav()" style="text-decoration: none; color: white;
+">&times;</a>
+  <div class="overlay-content">
+      <video id="video-frame" autoplay controls="controls">
+
+      </video>
+  </div>
+</div>
+    {{ block.super }}
+{% endblock %}
+
+{% block add_scripts %}
+<script>
+function on(arik) {
+    document.getElementById("myNav").style.width = "100%";
+    //alert(arik);
+    $('.overlay-content').html('<video id="video-frame" autoplay controls controlsList="nodownload" width="854" ' +
+        'height="478">\n' +
+        '<source src="'+arik+'" type="video/mp4"></source></video>' );
+    //alert(playerElement.src);
+
+}
+
+function closeNav() {
+  document.getElementById("myNav").style.width = "0%";
+  pausevideo();
+}
+
+function pausevideo() {
+    var vid = document.getElementById("video-frame");
+    vid.pause();
+    $('.overlay-content').html('');
+    //alert('Paused!');
+}</script>
+{% endblock %}

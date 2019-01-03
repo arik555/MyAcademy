@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{{ block.super }} {{ title }}
+{% endblock %}
+
+{% block content_fluid %}
+<style type="text/css">
+  .delete-row {
+    margin: 10px;
+    vertical-align: middle;
+    padding: 5px;
+    border: 1px solid #dc3545;
+    border-radius: 6px;
+    font-weight: 400;
+    text-decoration: none;
+    color: white;
+    background-color: #dc3545;
+  }
+  .add-row {
+    margin: 10px;
+    vertical-align: middle;
+    padding: 5px;
+    border: 1px solid #28a745;
+    border-radius: 6px;
+    font-weight: 400;
+    text-decoration: none;
+    color: white;
+    background-color: #28a745;
+  }
+#myForm {
+    border: 1.2px solid mediumslateblue;
+    border-top: none;
+    padding: 10px;
+
+}
+header {
+    font-size: 2rem;
+    font-family: "Roboto", "Lucida Grande", "DejaVu Sans", "Bitstream Vera Sans", Verdana, Arial, sans-serif;
+    border: 1.2px solid mediumslateblue;
+    border-radius: 5px 5px 0px 0px;
+    margin-top: 12px;
+    padding: 10px;
+    background-color: #f8f8ff;
+}
+#htm {
+    font-size: 1rem !important;
+}
+#formset .form-group input[type=checkbox], #formset .form-group input[type=number] {
+
+}
+.btn {
+    margin: 5px;
+}
+
+</style>
+    {% load crispy_forms_tags %}
+    <div class="row">
+        <div class="col-sm-6 offset-md-3">
+    {% if course %}
+        <header align="center">Define Course</header>
+        <form method="post" novalidate id="myForm">
+          {% csrf_token %}
+          {% include 'bs4_form.html' with form=form %}
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    {% elif chapter %}
+        <header>Define a Chapter<br><span class="text-muted" id="htm">Course: {{ course_select.name }}</span></header>
+        <form id="myForm" method="post" action="">{% csrf_token %}
+            {{ form|crispy }}
+            <input type="submit" value="Submit" class="btn btn-success">
+        </form>
+    {% elif section %}
+        <header>Define Sections<br><span class="text-muted" id="htm">Course: {{ course_select.name }}
+            and Chapter: {{ chapter_select.name }}</span></header>
+        {{ formset.media }}
+        {% load formset_tags %}
+        <form method="POST" enctype="multipart/form-data" id="myForm">{% csrf_token %}
+        <div id="formset" data-formset-prefix="{{ formset.prefix }}">
+            {{ formset.management_form|crispy }}
+
+            <div data-formset-body>
+                <!-- New forms will be inserted in here -->
+                {% for form in formset %}
+                    <div class="form-group" data-formset-form>
+                        {% crispy form %}
+                        <button type="button" data-formset-move-up-button class="btn btn-primary"><span class="fa fa-arrow-up"></span> Move up</button>
+                        <button type="button" data-formset-move-down-button class="btn btn-primary"><span class="fa
+                        fa-arrow-down"></span> Move down</button>
+                        <button type="button" data-formset-delete-button class="btn btn-danger"><span class="fa
+                        fa-trash"></span> Delete form</button>
+                    </div>
+                {% endfor %}
+            </div>
+            <script type="form-template" data-formset-empty-form>
+                {% escapescript %}
+                    <hr>
+                    <div class="form-group" data-formset-form>
+                        {{ formset.empty_form|crispy }}
+                        <button type="button" data-formset-move-up-button class="btn btn-primary"><span class="fa fa-arrow-up"></span> Move up</button>
+                        <button type="button" data-formset-move-down-button class="btn btn-primary"><span class="fa
+                        fa-arrow-down"></span> Move down</button>
+                        <button type="button" data-formset-delete-button class="btn btn-danger"><span class="fa
+                        fa-trash"></span> Delete form</button>
+                    </div>
+                {% endescapescript %}
+            </script>
+
+            <!-- This button will add a new form when clicked -->
+            <input type="button" value="Add form" data-formset-add class="btn btn-outline-success">
+            <input type="submit" value="Submit Section(s)" class="btn btn-success">
+            <script>jQuery(function($) {
+                $("#formset").formset({
+                    animateForms: true,
+                    reorderMode: 'dom',
+                });
+            });</script>
+        </div>
+
+        </form>
+    {% endif %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block footer %}
+{% include 'short_footer.html' %}
+{% endblock %}
+
+{% block add_scripts %}
+<script>
+var simplemde = new SimpleMDE();
+
+</script>
+{% endblock %}

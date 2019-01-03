@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{{ block.super }} {{ title }}
+{% endblock %}
+
+{% block content_fluid %}
+<style>
+#msg {
+    border: 1px solid green;
+    background-color: lightgreen;
+    border-radius: 8px;
+    padding: 8px 0px 8px 0px;
+}
+a {
+    margin: 16px;
+}
+</style>
+    <div class="row mt-4">
+        <div class="col-md-7 offset-sm-2">
+            <p class="lead text-center" id="msg">All the records were saved successfully.</p>
+        </div>
+    </div>
+    <h3>Wanna add more chapters in the same course?</h3>
+    <a href="{% url 'add_chapter' course=course_id %}" class="btn btn-outline-info">Yes I do.</a>
+    <a href="{% url 'my_courses' %}" class="btn btn-outline-warning">No I don't.</a>
+{% endblock %}
+
+{% block footer %}
+
+{% endblock %}
+
+{% block add_scripts %}
+<script></script>
+{% endblock %}

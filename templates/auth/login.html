@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{{ block.super }} {{ title }}
+{% endblock %}
+
+{% block content_fluid %}
+<style>
+    #myForm {
+    border: 1.2px solid mediumslateblue;
+    border-top: none;
+    padding: 10px;
+
+}
+    header {
+    font-size: 2rem;
+    font-family: "Roboto", "Lucida Grande", "DejaVu Sans", "Bitstream Vera Sans", Verdana, Arial, sans-serif;
+    border: 1.2px solid mediumslateblue;
+    border-radius: 5px 5px 0px 0px;
+    margin-top: 12px;
+    padding: 10px;
+    background-color: #f8f8ff;
+}
+</style>
+    <div class="row">
+        <div class="col-sm-6 offset-sm-3">
+        <header align="center">Login</header>
+        <form method="post" novalidate id="myForm">
+          {% csrf_token %}
+          {% include 'bs4_form.html' with form=form %}
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block footer %}
+{% include 'short_footer.html' %}
+{% endblock %}
+
+{% block add_scripts %}
+<script></script>
+{% endblock %}
